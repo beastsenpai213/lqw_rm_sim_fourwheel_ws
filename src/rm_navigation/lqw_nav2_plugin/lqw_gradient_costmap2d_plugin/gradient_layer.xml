@@ -1,0 +1,5 @@
+<library path="lqw_gradient_costmap2d_plugin_core">
+  <class name="lqw_gradient_costmap2d_plugin/GradientLayer" type="lqw_gradient_costmap2d_plugin::GradientLayer" base_class_type="nav2_costmap_2d::Layer">
+    <description> HURRAY!This is my first nav2 plugin!!! It's for costmap2d made of gradient method!!!</description>
+  </class>
+</library>

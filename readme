@@ -1,0 +1,78 @@
+一个 好的 工作 来自 lqw 330709390@qq.com
+继承了大量代码来自北理工的
+这是一份读我,你能通过这份读我可以了解了各个文件夹存储了哪些功能包了的
+
+-------------------------------------------
+
+src 文件夹 是 包含 以下文件夹的
+
+-------------------------------------------
+
+===rm_localization===
+
++++包含了一个较新和小型的点云匹配工作,他是一个icp点云匹配里程计,维护了/odom->/base_link,这是他的启动方式,
+ros2 launch kiss_icp odometry.launch.py topic:=/livox/lidar/pointcloud
+
++++一个是提供地图的框架和/map->/odom的变换树,保持导航2应用的正常运行
+ros2 run lqw_map_to_odom_static lqw_map_to_odom_static
+
+-------------------------------------------
+
+===rm_description===
+
++++这个文件夹 是 包含了livox仿真和机器人模型仿真的,
+通过以下指令启动模型(包含激光雷达)
+ros2 launch pb_rm_simulation rm_simulation.launch.py
+仿真速度 加速了 在我降低了 livox雷达的samples之后(这是 降低从 30000 到 10000 的)
+
++++由于场地模型过大无法git的原因，你应该首先解压模型的压缩包在该文件夹下的，请
+src\rm_simulation\pb_rm_simulation\meshes\RMUC2023_world
+
+-------------------------------------------
+
+===rm_perception===
+
++++这个文件夹 是 包含了地面分割的
+ros2 launch linefit_ground_segmentation_ros segmentation.launch.py
+产生了两个 话题 在下面: 
+/segmentation/obstacle 与 /segmentation/ground,两者均需更改QoS才可以在rviz中显示的,目前不清楚是否影响节点运作
+
+
++++这也是包含了将地面分割点云转化成scan话题,
+将点云数据类型转雷达扫描数据类型的	/segmentation/obstacle -> /scan
+ros2 launch pointcloud_to_laserscan pointcloud_to_laserscan_launch.py 
+
+-------------------------------------------
+
+===rm_navigation===
+
++++一个是导航2应用的启动,配置,地图文件,导航2应用的地图,节点配置,行为树可以在该文件夹下修改与配置,
+然后,导航2应用是这样启动的
+ros2 launch my_nav2 nav2_bringup.launch.py
+
++++一个是导航2的源码包,是提供了参考学习功能的,和他并不需要被你启动,因为这个原因,my_nav2的启动文件会帮助你启动导航2
+
++++lqw_nav2_plugin是我的nav2自定义插件,正在开发中,只有包含了一个梯度代价地图生成器,
+是在现在由于尚未开发成功,和在仿真程序中没有被使用的暂时地,请不要加进到导航2的配置文件
+如果由于路径问题无法编译,请直接将这个功能包移除
+
+-------------------------------------------
+
+===localization_interface===
+
++++这是自定义消息参数配置包
+
+-------------------------------------------
+
+===all_luanch.sh===
+
++++这是整个仿真程序的启动的节点,
+ros2 launch pb_rm_simulation rm_simulation.launch.py
+ros2 run lqw_map_to_odom_static lqw_map_to_odom_static 
+ros2 launch my_nav2 nav2_bringup.launch.py
+ros2 launch kiss_icp odometry.launch.py topic:=/livox/lidar/pointcloud
+ros2 launch linefit_ground_segmentation_ros segmentation.launch.py 
+ros2 launch pointcloud_to_laserscan pointcloud_to_laserscan_launch.py 
+这个./all_launch.sh是可以启动全部节点通过一次按键的
+
+-------------------------------------------
